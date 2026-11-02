@@ -123,7 +123,7 @@
  for(const [id,kind]of [['refInput','refs'],['tplInput','template']])$(id).onchange=async e=>{const f=e.target.files[0];e.target.value='';try{await WorkspaceIO.reference(f,kind);}catch(error){notify(error.message,true);}};
  $('settingsOpen').onclick=openSettings;$('referenceSheet').onchange=renderReference;document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());$('fileToggle').onclick=()=>document.body.classList.toggle('files-open');$('reloadLibs').onclick=()=>WorkspaceIO.libraries();
  $('threshold').oninput=()=>{$('thresholdValue').textContent=Number($('threshold').value).toFixed(2);W.invalidate();};
- $('clearAll').onclick=()=>{if(s.ocrBusy||s.matchBusy||busyImport()||s.cropPending)return;if(s.unsaved&&!confirm('本次任务还有未导出的数据，确定清空吗？'))return;releaseImage();s.docs=[];s.tables=[];s.submitted.clear();s.snapshot=null;s.refs=null;s.template=null;s.manual.clear();s.stale=false;s.unsaved=false;s.activeTable=null;s.activePage=null;s.lastError='';s.step=1;s.saved=[];s.revision++;s.matchRevision++;render();};
+ $('clearAll').onclick=()=>{if(s.ocrBusy||s.matchBusy||busyImport()||s.cropPending)return;if(s.unsaved&&!confirm('本次任务还有未导出的数据，确定清空吗？黄金对照表和汇总样表会继续保留。'))return;releaseImage();s.docs=[];s.tables=[];s.submitted.clear();s.snapshot=null;s.manual.clear();s.stale=false;s.unsaved=false;s.activeTable=null;s.activePage=null;s.lastError='';s.step=1;s.saved=[];s.revision++;s.matchRevision++;render();};
  window.addEventListener('beforeunload',e=>{if(s.unsaved||s.ocrBusy||s.matchBusy){e.preventDefault();e.returnValue='';}});
  window.addEventListener('pagehide',()=>{releaseImage();Matching.stop();Recognition.cancel();});
  
