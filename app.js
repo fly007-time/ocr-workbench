@@ -1,12 +1,12 @@
 (()=>{
- const {s,E}=W,$=id=>document.getElementById(id);let imageUrl=null,cropper=null,noticeTimer=null,renderQueued=false;
+ const {s,E}=W,$=id=>document.getElementById(id);let imageUrl=null,cropper=null,noticeTimer=null,renderQueued=false,reviewViewer=null;
  const h=(tag,attrs={},...children)=>{const el=document.createElement(tag);for(const [key,value]of Object.entries(attrs)){if(key==='class')el.className=value;else if(key==='style')el.style.cssText=value;else if(key==='contenteditable')el.contentEditable=String(value);else if(key.startsWith('on'))el[key.toLowerCase()]=value;else if(value!==false&&value!=null)el.setAttribute(key,value===true?'':value);}for(const child of children.flat(Infinity)){if(child!=null)el.append(child instanceof Node?child:document.createTextNode(String(child)));}return el;};
  const button=(text,action,className='',disabled=false)=>{const b=h('button',{class:className,type:'button',disabled});b.textContent=text;b.onclick=()=>Promise.resolve().then(action).catch(error=>notify(error.message,true));return b;};
  const pill=(text,type='')=>h('span',{class:'pill '+type},text);
  const money=cents=>(cents/100).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
  function persistentError(){document.getElementById('persistentError')?.remove();if(s.lastError)$('workspace').prepend(h('div',{class:'error-box',id:'persistentError'},h('div',{class:'row space'},h('strong',{},'操作未完成'),button('关闭',()=>{s.lastError='';persistentError();},'small')),h('div',{},s.lastError)));}
  function notify(message,error=false){clearTimeout(noticeTimer);$('notice').hidden=false;$('notice').className=error?'error':'';$('notice').textContent=message;s.message=message;s.lastError=error?message:'';persistentError();noticeTimer=setTimeout(()=>$('notice').hidden=true,6000);}
- function releaseImage(){cropper?.destroy();cropper=null;if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=null;}
+ function releaseImage(){reviewViewer?.destroy();reviewViewer=null;cropper?.destroy();cropper=null;if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=null;}
  function selected(){return W.orderedTables().filter(t=>t.selected);}
  const busyImport=()=>s.importing||s.exporting;
  function navigate(step){s.step=step;document.body.classList.remove('files-open');render();}
@@ -70,7 +70,7 @@
   if(!t.config.confirmed)root.append(h('div',{class:'warning-box'},'尚未确认表头和列位置。请打开“列设置”检查；未确认的表会列为解析异常。'));
   if(s.submitted.has(t.id)&&s.submitted.get(t.id).version!==t.version)root.append(h('div',{class:'warning-box'},'此表已修改，送入匹配后会替换旧版本，不会重复追加。'));
   document.body.dataset.reviewView=s.reviewView;const mobile=h('div',{class:'mobile-view-switch'});if(p)mobile.append(button('表格',()=>{s.reviewView='table';document.body.dataset.reviewView='table';},'small'),button('原图',()=>{s.reviewView='image';if(!s.showOriginal){s.showOriginal=true;render();}else document.body.dataset.reviewView='image';},'small'));root.append(mobile);
-  const split=h('div',{class:'split'+(!p||!s.showOriginal?' collapsed':'')});if(p&&s.showOriginal){const image=h('div',{class:'document-stage'},pageImage(p,false));split.append(h('div',{id:'originalPanel'},panel('原始页面',image,h('span',{class:'muted'},d.name+' / 第'+p.number+'页'))));}
+  const split=h('div',{class:'split'+(!p||!s.showOriginal?' collapsed':'')});if(p&&s.showOriginal){reviewViewer=ReviewImageViewer.create(pageImage(p,false),p);split.append(h('div',{id:'originalPanel'},panel('原始页面',reviewViewer.element,h('span',{class:'muted'},d.name+' / 第'+p.number+'页'))));}
   const editor=editableTable(t);split.append(h('div',{id:'tablePanel'},panel('表格内容',editor,h('span',{class:'muted'},`${t.rows.length} 行 · 修改自动保留`))));root.append(split);
   if(p?.notes)root.append(h('details',{class:'notes'},h('summary',{},'查看表格外说明（不参与导出）'),h('p',{},p.notes)));
  }
