@@ -116,9 +116,9 @@ body[data-density="compact"] { --row-height: 38px; --cell-padding: 3px 6px; }
 #steps button{word-break:keep-all}
 @media(max-width:760px){.actions button{font-size:22px}}
 
-/* Center the review table only while letting the browser size columns from content.
+/* Center workspace tables while letting the browser size columns from content.
    Auto margins resolve to zero on overflow, keeping the first column reachable. */
-.review-table-editor .table-wrap{padding:0 8px}
-.review-table-editor .table-wrap>table{width:max-content;min-width:0;table-layout:auto;margin-inline:auto;margin-block-start:12px}
+#workspace .table-wrap{padding:0 8px}
+#workspace .table-wrap>table{width:max-content;min-width:0;table-layout:auto;margin-inline:auto;margin-block-start:12px}
 .review-table-editor .row-number{width:auto;min-width:0}
-.review-table-editor>.page-control{justify-content:center}
+#workspace .page-control{justify-content:center}
